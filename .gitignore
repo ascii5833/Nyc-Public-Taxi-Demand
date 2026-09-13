@@ -1,4 +1,8 @@
-data/
+data/*
+data/*.parquet
+!data/raw/
+!data/*.dvc
+
 *.ipynb_checkpoints/
 *__pycache__/
 models/
