@@ -1,0 +1,27 @@
+stages:
+  preprocess:
+    cmd: python src\process_data.py
+    deps:
+    - data\raw\yellow_tripdata_2026-01.parquet
+    - data\raw\yellow_tripdata_2026-02.parquet
+    - data\raw\yellow_tripdata_2026-03.parquet
+    - data\raw\yellow_tripdata_2026-04.parquet
+    - data\raw\yellow_tripdata_2026-05.parquet
+    - src\process_data.py
+    outs:
+    - data\processed\taxi_demand_features_combined.parquet
+    - data\raw\taxi_demand_features_combined_raw.parquet
+  model_train_rf:
+    cmd: python src\train.py --model rf
+    deps:
+    - data\processed\taxi_demand_features_combined.parquet
+    - src\train.py
+    outs:
+    - models\tuned_RF.pkl
+  model_train_xgb:
+    cmd: python src\train.py --model xgb
+    deps:
+    - data\processed\taxi_demand_features_combined.parquet
+    - src\train.py
+    outs:
+    - models\tuned_XGB.pkl
