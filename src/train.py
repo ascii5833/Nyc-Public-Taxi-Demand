@@ -3,7 +3,7 @@ from sklearn.ensemble import RandomForestRegressor
 import mlflow
 import mlflow.sklearn
 import mlflow.xgboost
-from utils import setupmlflow
+from utils import setupmlflow, load_data_version
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 import numpy as np
 import optuna
@@ -12,6 +12,7 @@ import joblib
 from pathlib import Path
 from xgboost import XGBRegressor
 import argparse
+
 
 #paths
 ROOT_DIR = Path(__file__).resolve().parent.parent
@@ -23,6 +24,8 @@ features = ["PULocationID", "hour", "day_of_week", "previous_hour", "previous_da
 
 MODEL_DIR = ROOT_DIR / "models"
 MODEL_DIR.mkdir(parents=True, exist_ok=True)
+
+DVC_LOCK_PATH = ROOT_DIR / "dvc.lock"
 
 #mlflow params
 db_path = ROOT_DIR / "mlflow" / "mlflow.db"
@@ -95,6 +98,8 @@ def tuneRF(data_split : list[tuple[pd.DataFrame]] = None):
     #mlflow run
     with mlflow.start_run(run_name = "RF_OP_Best") as run:
         mlflow.log_params(best)
+        data_ver = load_data_version(DVC_LOCK_PATH)
+        mlflow.set_tag("dvc_processed_data_hash", data_ver)
         mlflow.log_param("random_state", 42)
         mlflow.log_metrics({
             "mae": mae,
@@ -183,6 +188,9 @@ def tuneXGB(data_split : list[tuple[pd.DataFrame]] = None):
     with mlflow.start_run(run_name = "xgb_OP_Best") as run:
         mlflow.log_params(best)
         mlflow.log_param("random_state", 42)
+        data_ver = load_data_version(DVC_LOCK_PATH)
+        mlflow.set_tag("dvc_processed_data_hash", data_ver)
+
         mlflow.log_metrics({
             "mae": mae,
             "rmse":rmse,
