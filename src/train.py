@@ -121,14 +121,17 @@ def _xgbObj(trial, X_train, y_train, X_val, y_val) -> int:
     '''
     params = {
         "n_estimators": 5000,
-        "max_depth": trial.suggest_int("max_depth", 3, 10),
+        "max_depth": trial.suggest_int("max_depth", 3, 7),
         "tree_method": "hist",
         "booster": "gbtree",
         "learning_rate": trial.suggest_float("learning_rate", 1e-3, 0.3, log=True),
-        "subsample": trial.suggest_float("subsample", 0.5, 1.0),
+        "subsample": trial.suggest_float("subsample", 0.6, 0.9),
         "random_state":42,
-        "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
-        "early_stopping_rounds" : 50
+        "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 0.9),
+        "early_stopping_rounds" : 50,
+        "reg_alpha" : trial.suggest_float("reg_alpha", 1e-3, 10.0, log = True),
+        "reg_lambda" : trial.suggest_float("reg_lambda", 1.0, 50.0, log = True),
+        "min_child_weight": trial.suggest_int("min_child_weight", 1, 20)
     }
     
     model = XGBRegressor(**params, n_jobs = -1,)
@@ -157,13 +160,20 @@ def tuneXGB(data_split : list[tuple[pd.DataFrame]] = None):
     )
     
     best = study.best_params
-    
+    final_params = {
+        "n_estimators" : 5000,
+        "tree_method" : "hist",
+        "booster" : "gbtree",
+        "random_state": 42,
+        "early_stopping_rounds" : 50,
+        **best
+    }
     log.info(f"XGBOOST best params {best} CV (R2) = {study.best_value}")
     
     
     #model to store
-    model = XGBRegressor(**best, n_jobs = -1)
-    model.fit(X_train, y_train)
+    model = XGBRegressor(**final_params, n_jobs = -1)
+    model.fit(X_train, y_train, eval_set = [(X_val, y_val)], verbose = False)
     y_pred = model.predict(X_test)
     #metrics
     mae = mean_absolute_error(y_test, y_pred)
@@ -227,7 +237,7 @@ if __name__ == "__main__":
     
     #setup mlflow
     setupmlflow(uri, experiment_name)
-    rf_res = ""
+    res = ""
     if model == "rf":
         #random forest optimization
         rf_res = tuneRF([(X_train, y_train), (X_val, y_val), (X_test, y_test)])
@@ -237,7 +247,7 @@ if __name__ == "__main__":
             model_uri = f"models:/{rf_res['model'].model_id}",
             name = "random_forest_taxi_demand"
         )
-    
+        res = rf_res
     elif model == "xgb":
         #xgboost optimization
         xgb_res = tuneXGB([(X_train, y_train), (X_val, y_val), (X_test, y_test)])
@@ -247,8 +257,9 @@ if __name__ == "__main__":
             model_uri = f"models:/{xgb_res['model'].model_id}",
             name = "xgboost_taxi_demand"
         )
+        res = xgb_res
        
-    print(rf_res)
+    print(res)
     
     
     
