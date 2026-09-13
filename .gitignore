@@ -1,5 +1,6 @@
 data/*
-data/*.parquet
+data/raw/taxi_demand_features_combined_raw.parquet
+data/raw/taxi_demand_features_raw.parquet
 !data/raw/
 !data/*.dvc
 
