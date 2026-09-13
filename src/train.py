@@ -32,7 +32,7 @@ uri  = f"sqlite:///{db_path.as_posix()}"
 experiment_name = "nyc_taxi_demand"
 
 #optuna params
-N_TRIALS = 100
+N_TRIALS = 3
 
 #setup loggers
 log = logging.getLogger(__name__)

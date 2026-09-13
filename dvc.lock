@@ -1,0 +1,70 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src\process_data.py
+    deps:
+    - path: data\raw\yellow_tripdata_2026-01.parquet
+      hash: md5
+      md5: eadd527e67c4b329c2cf871f5991cbbc
+      size: 64165080
+    - path: data\raw\yellow_tripdata_2026-02.parquet
+      hash: md5
+      md5: 81d8f3a5c1d50509e65d3839c05bf952
+      size: 58683353
+    - path: data\raw\yellow_tripdata_2026-03.parquet
+      hash: md5
+      md5: 499308add281d0c51e3fe4c41f4f0d13
+      size: 67891249
+    - path: data\raw\yellow_tripdata_2026-04.parquet
+      hash: md5
+      md5: 124389b64dc4ad9cddf490d44cc7c2c9
+      size: 64818115
+    - path: data\raw\yellow_tripdata_2026-05.parquet
+      hash: md5
+      md5: b7d3b6c3837619b5719fd601cb9a7f52
+      size: 69699174
+    - path: src\process_data.py
+      hash: md5
+      md5: b61c36f5d56959233c7d80d36113d7e1
+      size: 3925
+    outs:
+    - path: data\processed\taxi_demand_features_combined.parquet
+      hash: md5
+      md5: 8a9df515a5c9165c6565ef81e797be43
+      size: 5364166
+    - path: data\raw\taxi_demand_features_combined_raw.parquet
+      hash: md5
+      md5: db602559e4fbabda476153f7c2e0f3a8
+      size: 5570558
+  model_train_rf:
+    cmd: python src\train.py --model rf
+    deps:
+    - path: data\processed\taxi_demand_features_combined.parquet
+      hash: md5
+      md5: 8a9df515a5c9165c6565ef81e797be43
+      size: 5364166
+    - path: src\train.py
+      hash: md5
+      md5: 0e75ddb3dda5e5018d18abe3a10ace4b
+      size: 9060
+    outs:
+    - path: models\tuned_RF.pkl
+      hash: md5
+      md5: 1a4d1a0b8e35af896e0e16882fe8f924
+      size: 457000785
+  model_train_xgb:
+    cmd: python src\train.py --model xgb
+    deps:
+    - path: data\processed\taxi_demand_features_combined.parquet
+      hash: md5
+      md5: 8a9df515a5c9165c6565ef81e797be43
+      size: 5364166
+    - path: src\train.py
+      hash: md5
+      md5: 0e75ddb3dda5e5018d18abe3a10ace4b
+      size: 9060
+    outs:
+    - path: models\tuned_XGB.pkl
+      hash: md5
+      md5: b2d7a3ab44694c2d48845a18095ed849
+      size: 11686261
