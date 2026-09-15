@@ -1,70 +1,70 @@
 schema: '2.0'
 stages:
   preprocess:
-    cmd: python src\process_data.py
+    cmd: python src/process_data.py
     deps:
-    - path: data\raw\yellow_tripdata_2026-01.parquet
+    - path: data/raw/yellow_tripdata_2026-01.parquet
       hash: md5
       md5: eadd527e67c4b329c2cf871f5991cbbc
       size: 64165080
-    - path: data\raw\yellow_tripdata_2026-02.parquet
+    - path: data/raw/yellow_tripdata_2026-02.parquet
       hash: md5
       md5: 81d8f3a5c1d50509e65d3839c05bf952
       size: 58683353
-    - path: data\raw\yellow_tripdata_2026-03.parquet
+    - path: data/raw/yellow_tripdata_2026-03.parquet
       hash: md5
       md5: 499308add281d0c51e3fe4c41f4f0d13
       size: 67891249
-    - path: data\raw\yellow_tripdata_2026-04.parquet
+    - path: data/raw/yellow_tripdata_2026-04.parquet
       hash: md5
       md5: 124389b64dc4ad9cddf490d44cc7c2c9
       size: 64818115
-    - path: data\raw\yellow_tripdata_2026-05.parquet
+    - path: data/raw/yellow_tripdata_2026-05.parquet
       hash: md5
       md5: b7d3b6c3837619b5719fd601cb9a7f52
       size: 69699174
-    - path: src\process_data.py
+    - path: src/process_data.py
       hash: md5
       md5: b61c36f5d56959233c7d80d36113d7e1
       size: 3925
     outs:
-    - path: data\processed\taxi_demand_features_combined.parquet
+    - path: data/processed/taxi_demand_features_combined.parquet
       hash: md5
       md5: 8a9df515a5c9165c6565ef81e797be43
       size: 5364166
-    - path: data\raw\taxi_demand_features_combined_raw.parquet
+    - path: data/raw/taxi_demand_features_combined_raw.parquet
       hash: md5
       md5: db602559e4fbabda476153f7c2e0f3a8
       size: 5570558
   model_train_rf:
-    cmd: python src\train.py --model rf
+    cmd: python src/train.py --model rf
     deps:
-    - path: data\processed\taxi_demand_features_combined.parquet
+    - path: data/processed/taxi_demand_features_combined.parquet
       hash: md5
       md5: 8a9df515a5c9165c6565ef81e797be43
       size: 5364166
-    - path: src\train.py
+    - path: src/train.py
       hash: md5
-      md5: c84c2618b5ad3fbbb66628962f06757c
-      size: 9354
+      md5: 25a9615680069e1b6e6b8eba16a93335
+      size: 9352
     outs:
-    - path: models\tuned_RF.pkl
+    - path: models/tuned_RF.pkl
       hash: md5
-      md5: fe9f9e253ba39ad5ae340fa4d81b2027
-      size: 2464968385
+      md5: 1d244ca37eb094a52e771df7e1d048f4
+      size: 457000785
   model_train_xgb:
-    cmd: python src\train.py --model xgb
+    cmd: python src/train.py --model xgb
     deps:
-    - path: data\processed\taxi_demand_features_combined.parquet
+    - path: data/processed/taxi_demand_features_combined.parquet
       hash: md5
       md5: 8a9df515a5c9165c6565ef81e797be43
       size: 5364166
-    - path: src\train.py
+    - path: src/train.py
       hash: md5
-      md5: c84c2618b5ad3fbbb66628962f06757c
-      size: 9354
+      md5: 25a9615680069e1b6e6b8eba16a93335
+      size: 9352
     outs:
-    - path: models\tuned_XGB.pkl
+    - path: models/tuned_XGB.pkl
       hash: md5
-      md5: 661369d794d544a5f972a836ef92e05f
-      size: 11542163
+      md5: b7a335eb536ef7c9c0d3c5b95da5a9b1
+      size: 1080477
