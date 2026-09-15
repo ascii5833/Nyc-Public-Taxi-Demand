@@ -1,0 +1,11 @@
+data/
+*.ipynb_checkpoints/
+*__pycache__/
+*mlruns/
+*.py[cod]
+.venv/
+venv/
+env/
+notebooks/
+.dvc/
+src/mlruns/

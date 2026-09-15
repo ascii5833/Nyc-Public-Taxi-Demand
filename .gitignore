@@ -11,6 +11,6 @@ models/
 *.py[cod]
 .venv/
 venv/
-.env
+env/
 mlflow/
 mlflow.db

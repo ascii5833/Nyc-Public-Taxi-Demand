@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import mlflow
 from pydantic import BaseModel
-from utils import setupmlflow
+from src.utils import setupmlflow
 from pathlib import Path
 import pandas as pd
 import uvicorn
@@ -17,7 +17,6 @@ db_path.parent.mkdir(parents = True, exist_ok = True)
 #setup mlflow
 uri  = f"sqlite:///{db_path.as_posix()}"
 experiment_name = "nyc_taxi_demand"
-
 
 app = FastAPI()
 # Model input template
